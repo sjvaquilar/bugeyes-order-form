@@ -1,0 +1,654 @@
+<!-- Bug Eyes order form. Paste this whole block into the page. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Caveat:wght@500&family=Oswald:wght@500&family=Playfair+Display+SC&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<style>
+  .bugeyes-container {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 16px;
+    background: #ffffff;
+    color: #111111;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    box-sizing: border-box;
+  }
+  .bugeyes-container * { box-sizing: border-box; }
+
+  .bugeyes-container .be-privacy {
+    background: #f4f4f5;
+    border: 1px solid #e4e4e7;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 12px;
+    color: #52525b;
+    text-align: center;
+    margin-bottom: 16px;
+    line-height: 1.4;
+  }
+
+  .bugeyes-container .be-card {
+    text-align: left;
+    border: 2px solid #111111;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+  .bugeyes-container .be-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .bugeyes-container .be-card-title { margin: 0; font-size: 20px; }
+  .bugeyes-container .be-remove {
+    background: none;
+    border: 1px solid #d4d4d8;
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 13px;
+    color: #52525b;
+    cursor: pointer;
+  }
+
+  .bugeyes-container .be-group { margin-bottom: 18px; }
+  .bugeyes-container .be-label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 8px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .bugeyes-container .be-desc {
+    font-size: 13px;
+    color: #52525b;
+    margin: -4px 0 10px;
+    line-height: 1.4;
+  }
+
+  .bugeyes-container .be-field { margin-top: 8px; }
+  .bugeyes-container input[type="text"],
+  .bugeyes-container input[type="tel"],
+  .bugeyes-container select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: #fff;
+    color: #111;
+  }
+  .bugeyes-container .be-invalid { border-color: #b91c1c !important; background-color: #fef2f2 !important; }
+  .bugeyes-container .be-error {
+    color: #b91c1c;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 4px;
+    display: none;
+  }
+  .bugeyes-container .be-error.be-show { display: block; }
+
+  .bugeyes-container .be-fonts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .bugeyes-container .be-font {
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px 8px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 16px;
+    background: #fafafa;
+    color: #111111;
+  }
+  .bugeyes-container .be-font.be-active {
+    border-color: #000000;
+    background: #000000;
+    color: #ffffff;
+  }
+
+  /* Outer preview: a band that the text shrinks to fit */
+  .bugeyes-container .be-band {
+    border: 2px dashed #000000;
+    background: #f9f9f9;
+    border-radius: 30px;
+    height: 60px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .bugeyes-container .be-band-text {
+    display: inline-block;
+    white-space: nowrap;
+    font-size: 30px;
+    line-height: 1;
+  }
+  .bugeyes-container .be-band-text.be-empty { color: #a1a1aa; }
+
+  .bugeyes-container .be-inner-preview {
+    border: 2px dashed #71717a;
+    background: #f4f4f5;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #27272a;
+    font-family: monospace;
+    word-break: break-word;
+  }
+
+  .bugeyes-container .f-bangers { font-family: 'Bangers', cursive !important; }
+  .bugeyes-container .f-oswald { font-family: 'Oswald', sans-serif !important; }
+  .bugeyes-container .f-caveat { font-family: 'Caveat', cursive !important; }
+  .bugeyes-container .f-playfair { font-family: 'Playfair Display SC', serif !important; }
+  .bugeyes-container .f-wildflower { font-family: 'BeautifulWildflower', serif !important; }
+  .bugeyes-container .f-script { font-family: 'BeautifulWildflowerScript', cursive !important; }
+
+  .bugeyes-container .be-btn-primary {
+    width: 100%;
+    background: #000000;
+    color: #ffffff;
+    border: none;
+    padding: 16px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  .bugeyes-container .be-btn-secondary {
+    width: 100%;
+    background: #f4f4f5;
+    color: #111111;
+    border: 1px solid #d4d4d8;
+    padding: 12px;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .bugeyes-container .be-link {
+    background: none;
+    border: none;
+    color: #52525b;
+    text-decoration: underline;
+    font-size: 14px;
+    margin-top: 14px;
+    cursor: pointer;
+  }
+  .bugeyes-container .be-note { font-size: 13px; color: #52525b; text-align: center; margin: 8px 0 0; }
+  .bugeyes-container .be-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 13px;
+    margin-top: 12px;
+    line-height: 1.4;
+  }
+  .bugeyes-container .be-top-error {
+    background: #fef2f2;
+    border: 1px solid #b91c1c;
+    color: #b91c1c;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 12px;
+    display: none;
+  }
+  .bugeyes-container .be-top-error.be-show { display: block; }
+
+  .bugeyes-container #be-qr-screen { display: none; text-align: center; padding: 20px 0; }
+  .bugeyes-container #be-qrcode { display: flex; justify-content: center; margin: 20px 0; }
+  .bugeyes-container #be-qrcode img,
+  .bugeyes-container #be-qrcode canvas { width: 100%; max-width: 320px; height: auto; }
+</style>
+
+<div class="bugeyes-container">
+
+  <div class="be-privacy">
+    <strong>Zero-Data Privacy Guarantee:</strong> This form runs 100% inside your phone's browser. No data is sent to or stored on our servers. Tapping "Generate Order QR Code" creates a code on your screen that is wiped as soon as your bracelet is etched.
+  </div>
+
+  <div id="be-form-screen">
+
+    <div id="be-bracelets">
+      <div class="be-card" data-font="Bangers">
+        <div class="be-card-head">
+          <h3 class="be-card-title">Bracelet 1</h3>
+          <button type="button" class="be-remove" onclick="beRemove(this)" style="display:none;">Remove</button>
+        </div>
+
+        <div class="be-group">
+          <span class="be-label">Outer Message</span>
+          <div class="be-field">
+            <select class="be-outer-preset" onchange="beChange(this)">
+            <option value="">Choose a message</option>
+            <option value="FUCK ICE">FUCK ICE</option>
+            <option value="ABOLISH ICE">ABOLISH ICE</option>
+            <option value="MELT ICE">MELT ICE</option>
+            <option value="NO KINGS">NO KINGS</option>
+            <option value="RESIST">RESIST</option>
+            <option value="ICE OUT">ICE OUT</option>
+            <option value="CHINGA LA MIGRA">CHINGA LA MIGRA</option>
+            <option value="READ ME">READ ME</option>
+            <option value="CUSTOM">Write my own</option>
+            </select>
+            <div class="be-error"></div>
+          </div>
+          <div class="be-field be-outer-custom-wrap" style="display:none;">
+            <input type="text" class="be-outer-custom" oninput="beInput(this)" placeholder="Type your outer message" maxlength="40" autocomplete="off">
+            <div class="be-error"></div>
+          </div>
+        </div>
+
+        <div class="be-group">
+          <span class="be-label">Outer Font</span>
+          <div class="be-fonts">
+          <button type="button" onclick="beFont(this)" class="be-font f-bangers be-active" data-font="Bangers">Bangers</button>
+          <button type="button" onclick="beFont(this)" class="be-font f-oswald" data-font="Oswald">Oswald</button>
+          <button type="button" onclick="beFont(this)" class="be-font f-caveat" data-font="Caveat">Caveat</button>
+          <button type="button" onclick="beFont(this)" class="be-font f-playfair" data-font="Playfair">Playfair</button>
+          <button type="button" onclick="beFont(this)" class="be-font f-wildflower" data-font="Wildflower">Wildflower</button>
+          <button type="button" onclick="beFont(this)" class="be-font f-script" data-font="Script">Script</button>
+          </div>
+        </div>
+
+        <div class="be-group">
+          <span class="be-label">Outer Preview</span>
+          <div class="be-band"><span class="be-band-text be-empty f-bangers">YOUR OUTER MESSAGE</span></div>
+        </div>
+
+        <div class="be-group">
+          <span class="be-label">Inside Message</span>
+          <div class="be-field">
+            <select class="be-inner-type" onchange="beChange(this)">
+              <option value="STANDARD">Emergency contact information</option>
+              <option value="CUSTOM">Custom inside message</option>
+              <option value="BLANK">Leave the inside blank</option>
+            </select>
+          </div>
+          <div class="be-std">
+            <div class="be-field">
+              <input type="text" class="be-wearer" oninput="beInput(this)" placeholder="Wearer's first name" maxlength="25" autocomplete="off">
+              <div class="be-error"></div>
+            </div>
+            <div class="be-field">
+              <input type="text" class="be-contact" oninput="beInput(this)" placeholder="Emergency contact's first name" maxlength="25" autocomplete="off">
+              <div class="be-error"></div>
+            </div>
+            <div class="be-field">
+              <input type="tel" class="be-ecphone be-phone" oninput="bePhone(this)" placeholder="Emergency contact's phone #" maxlength="14" autocomplete="off">
+              <div class="be-error"></div>
+            </div>
+          </div>
+          <div class="be-cust" style="display:none;">
+            <div class="be-field">
+              <input type="text" class="be-inner-custom" oninput="beInput(this)" placeholder="Type your inside message" maxlength="120" autocomplete="off">
+              <div class="be-error"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="be-group" style="margin-bottom:0;">
+          <span class="be-label">Inside Preview</span>
+          <div class="be-inner-preview">If found on the ground, I have been taken by ICE. My name is [name]. Please call [Emergency Contact] at [EC phone number] to let them know.</div>
+        </div>
+      </div>
+    </div>
+
+    <button type="button" class="be-btn-secondary" id="be-add" onclick="beAdd()">+ Add Another Bracelet</button>
+    <p class="be-note" id="be-max-note" style="display:none;"></p>
+
+    <hr style="border: 0; border-top: 1px solid #e0e0e0; margin: 24px 0;">
+
+    <div class="be-group">
+      <span class="be-label">Order Contact Info</span>
+      <div class="be-desc">Enter a name for this order, and a cell number if you'd like us to text you when it's ready. Both are optional.</div>
+      <div class="be-field">
+        <input type="text" id="be-customer-name" placeholder="Your name (for pickup)" maxlength="30" autocomplete="off">
+        <div class="be-error"></div>
+      </div>
+      <div class="be-field">
+        <input type="tel" id="be-customer-sms" class="be-phone" oninput="bePhone(this)" placeholder="Cell phone # (for a text when ready)" maxlength="14" autocomplete="off">
+        <div class="be-error"></div>
+      </div>
+      <label class="be-check">
+        <input type="checkbox" id="be-optin" onchange="beOptin()" style="margin-top: 2px;">
+        <span>Keep me updated about future Kinda Shiny drops and event locations.</span>
+      </label>
+    </div>
+
+    <div class="be-top-error" id="be-top-error"></div>
+    <button type="button" class="be-btn-primary" id="be-generate" onclick="beGenerate()">Generate Order QR Code</button>
+  </div>
+
+  <div id="be-qr-screen">
+    <h2 style="margin: 0;">Show This Code At The Table</h2>
+    <p style="color: #666; font-size: 14px;">We'll scan it at the laptop to send your order into the etching queue.</p>
+    <div id="be-qrcode"></div>
+    <button type="button" class="be-btn-primary" id="be-done" data-url="https://kindashiny.com/#bugeyes" onclick="beDone(this)">I'm Done</button>
+    <br>
+    <button type="button" class="be-link" id="be-edit" onclick="beEdit()">Go back and fix something</button>
+  </div>
+
+</div>
+
+<script>
+  var BE_MAX_BRACELETS = 5;
+  var BE_BAND_MAX_PX = 30;
+  var BE_BAND_MIN_PX = 9;
+
+  function beCards() {
+    return document.getElementById("be-bracelets").querySelectorAll(".be-card");
+  }
+
+  function beFontClass(name) {
+    if (name === "Oswald") return "f-oswald";
+    if (name === "Caveat") return "f-caveat";
+    if (name === "Playfair") return "f-playfair";
+    if (name === "Wildflower") return "f-wildflower";
+    if (name === "Script") return "f-script";
+    return "f-bangers";
+  }
+
+  function beSetError(input, msg) {
+    input.classList.add("be-invalid");
+    var err = input.parentNode.querySelector(".be-error");
+    if (err) { err.innerText = msg; err.classList.add("be-show"); }
+  }
+
+  function beClearError(input) {
+    input.classList.remove("be-invalid");
+    var err = input.parentNode.querySelector(".be-error");
+    if (err) { err.innerText = ""; err.classList.remove("be-show"); }
+  }
+
+  function beFormatPhone(val) {
+    var digits = val.replace(/\D/g, "");
+    if (digits.length === 11) {
+      if (digits.charAt(0) === "1") digits = digits.substring(1);
+    }
+    if (digits.length > 10) digits = digits.substring(0, 10);
+    var formatted = "";
+    if (digits.length > 0) formatted = "(" + digits.substring(0, 3);
+    if (digits.length >= 4) formatted += ") " + digits.substring(3, 6);
+    if (digits.length >= 7) formatted += "-" + digits.substring(6, 10);
+    return formatted;
+  }
+
+  function beDigitCount(val) {
+    return val.replace(/\D/g, "").length;
+  }
+
+  function beOuterText(card) {
+    var preset = card.querySelector(".be-outer-preset").value;
+    if (preset === "CUSTOM") return card.querySelector(".be-outer-custom").value.trim();
+    return preset;
+  }
+
+  function beFitBand(card) {
+    var band = card.querySelector(".be-band");
+    var t = card.querySelector(".be-band-text");
+    var room = band.clientWidth - 24;
+    if (room < 1) return;
+    var size = BE_BAND_MAX_PX;
+    t.style.fontSize = size + "px";
+    while (t.offsetWidth > room) {
+      if (size === BE_BAND_MIN_PX) break;
+      size = size - 1;
+      t.style.fontSize = size + "px";
+    }
+  }
+
+  function beUpdateOuter(card) {
+    var t = card.querySelector(".be-band-text");
+    var text = beOuterText(card);
+    t.innerText = text || "YOUR OUTER MESSAGE";
+    t.className = "be-band-text " + beFontClass(card.getAttribute("data-font"));
+    if (!text) t.classList.add("be-empty");
+    var wrap = card.querySelector(".be-outer-custom-wrap");
+    wrap.style.display = (card.querySelector(".be-outer-preset").value === "CUSTOM") ? "block" : "none";
+    beFitBand(card);
+  }
+
+  function beUpdateInner(card) {
+    var type = card.querySelector(".be-inner-type").value;
+    var box = card.querySelector(".be-inner-preview");
+    card.querySelector(".be-std").style.display = (type === "STANDARD") ? "block" : "none";
+    card.querySelector(".be-cust").style.display = (type === "CUSTOM") ? "block" : "none";
+    if (type === "STANDARD") {
+      var wearer = card.querySelector(".be-wearer").value.trim() || "[name]";
+      var contact = card.querySelector(".be-contact").value.trim() || "[Emergency Contact]";
+      var phone = card.querySelector(".be-ecphone").value.trim() || "[EC phone number]";
+      box.innerText = "If found on the ground, I have been taken by ICE. My name is " + wearer + ". Please call " + contact + " at " + phone + " to let them know.";
+    } else if (type === "CUSTOM") {
+      box.innerText = card.querySelector(".be-inner-custom").value.trim() || "Your custom inside message";
+    } else {
+      box.innerText = "[ Inside left blank ]";
+    }
+  }
+
+  function beUpdateCard(card) {
+    beUpdateOuter(card);
+    beUpdateInner(card);
+  }
+
+  function beRenumber() {
+    var all = beCards();
+    for (var i = 0; i < all.length; i++) {
+      all[i].querySelector(".be-card-title").innerText = "Bracelet " + (i + 1);
+      all[i].querySelector(".be-remove").style.display = (all.length > 1) ? "inline-block" : "none";
+    }
+    var addBtn = document.getElementById("be-add");
+    var note = document.getElementById("be-max-note");
+    if (all.length >= BE_MAX_BRACELETS) {
+      addBtn.style.display = "none";
+      note.style.display = "block";
+      note.innerText = "That is the most we can fit in one order (" + BE_MAX_BRACELETS + "). Need more? Finish this order, then start a second one.";
+    } else {
+      addBtn.style.display = "block";
+      note.style.display = "none";
+    }
+  }
+
+  function beInput(el) {
+    beClearError(el);
+    beUpdateCard(el.closest(".be-card"));
+  }
+
+  function beChange(el) {
+    beClearError(el);
+    beUpdateCard(el.closest(".be-card"));
+  }
+
+  function bePhone(el) {
+    el.value = beFormatPhone(el.value);
+    beClearError(el);
+    var card = el.closest(".be-card");
+    if (card) beUpdateCard(card);
+  }
+
+  function beOptin() {
+    beClearError(document.getElementById("be-customer-sms"));
+  }
+
+  function beFont(el) {
+    var card = el.closest(".be-card");
+    var btns = card.querySelectorAll(".be-font");
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].classList.remove("be-active");
+    }
+    el.classList.add("be-active");
+    card.setAttribute("data-font", el.getAttribute("data-font"));
+    beUpdateOuter(card);
+  }
+
+  function beRemove(el) {
+    var card = el.closest(".be-card");
+    card.parentNode.removeChild(card);
+    beRenumber();
+  }
+
+  function beAdd() {
+    var all = beCards();
+    if (all.length >= BE_MAX_BRACELETS) return;
+    var card = all[0].cloneNode(true);
+    var i;
+    var inputs = card.querySelectorAll("input");
+    for (i = 0; i < inputs.length; i++) {
+      inputs[i].value = "";
+      beClearError(inputs[i]);
+    }
+    var selects = card.querySelectorAll("select");
+    for (i = 0; i < selects.length; i++) {
+      selects[i].selectedIndex = 0;
+      beClearError(selects[i]);
+    }
+    var btns = card.querySelectorAll(".be-font");
+    for (i = 0; i < btns.length; i++) {
+      btns[i].classList.remove("be-active");
+    }
+    btns[0].classList.add("be-active");
+    card.setAttribute("data-font", "Bangers");
+    document.getElementById("be-bracelets").appendChild(card);
+    beRenumber();
+    beUpdateCard(card);
+    card.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function beValidate() {
+    var first = null;
+    function flag(input, msg) {
+      beSetError(input, msg);
+      if (!first) first = input;
+    }
+
+    var all = beCards();
+    for (var i = 0; i < all.length; i++) {
+      var c = all[i];
+      var preset = c.querySelector(".be-outer-preset");
+      var outerCustom = c.querySelector(".be-outer-custom");
+      beClearError(preset);
+      beClearError(outerCustom);
+      if (!preset.value) {
+        flag(preset, "Please choose an outer message.");
+      } else if (preset.value === "CUSTOM") {
+        if (!outerCustom.value.trim()) flag(outerCustom, "Please type your outer message.");
+      }
+
+      var type = c.querySelector(".be-inner-type").value;
+      var wearer = c.querySelector(".be-wearer");
+      var contact = c.querySelector(".be-contact");
+      var ecphone = c.querySelector(".be-ecphone");
+      var innerCustom = c.querySelector(".be-inner-custom");
+      beClearError(wearer);
+      beClearError(contact);
+      beClearError(ecphone);
+      beClearError(innerCustom);
+      if (type === "STANDARD") {
+        if (!wearer.value.trim()) flag(wearer, "Please enter the wearer's first name.");
+        if (!contact.value.trim()) flag(contact, "Please enter the emergency contact's first name.");
+        if (beDigitCount(ecphone.value) !== 10) flag(ecphone, "Please enter a 10-digit phone number, including area code.");
+      } else if (type === "CUSTOM") {
+        if (!innerCustom.value.trim()) flag(innerCustom, "Please type your inside message, or choose to leave the inside blank.");
+      }
+    }
+
+    var sms = document.getElementById("be-customer-sms");
+    beClearError(sms);
+    var smsDigits = beDigitCount(sms.value);
+    if (smsDigits === 0) {
+      if (document.getElementById("be-optin").checked) flag(sms, "Add a cell number so we can send updates, or uncheck the box below.");
+    } else if (smsDigits !== 10) {
+      flag(sms, "Please enter a 10-digit cell number, or leave this blank.");
+    }
+    return first;
+  }
+
+  function beClean(s) {
+    return s.trim().split("|").join("/");
+  }
+
+  function beBuildPayload() {
+    var items = [];
+    var all = beCards();
+    for (var i = 0; i < all.length; i++) {
+      var c = all[i];
+      var type = c.querySelector(".be-inner-type").value;
+      var back = "BLANK";
+      if (type === "STANDARD") {
+        back = "STD:" + beClean(c.querySelector(".be-wearer").value) + "|" + beClean(c.querySelector(".be-contact").value) + "|" + c.querySelector(".be-ecphone").value.trim();
+      } else if (type === "CUSTOM") {
+        back = "CUST:" + c.querySelector(".be-inner-custom").value.trim();
+      }
+      items.push({ font: c.getAttribute("data-font"), front: beOuterText(c), back: back });
+    }
+    return {
+      name: document.getElementById("be-customer-name").value.trim() || "Guest",
+      sms: document.getElementById("be-customer-sms").value.trim(),
+      optin: document.getElementById("be-optin").checked ? 1 : 0,
+      items: items
+    };
+  }
+
+  function beShowTopError(msg) {
+    var box = document.getElementById("be-top-error");
+    box.innerText = msg;
+    box.classList.add("be-show");
+  }
+
+  function beGenerate() {
+    document.getElementById("be-top-error").classList.remove("be-show");
+    var bad = beValidate();
+    if (bad) {
+      beShowTopError("Something needs fixing before we can make your code. We have taken you to the first spot.");
+      bad.scrollIntoView({ behavior: "smooth", block: "center" });
+      bad.focus();
+      return;
+    }
+
+    var el = document.getElementById("be-qrcode");
+    el.innerHTML = "";
+    try {
+      new QRCode(el, {
+        text: JSON.stringify(beBuildPayload()),
+        width: 512,
+        height: 512,
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    } catch (err) {
+      el.innerHTML = "";
+      beShowTopError("We could not make the code. Please shorten a custom message or remove a bracelet, then try again.");
+      return;
+    }
+
+    document.getElementById("be-form-screen").style.display = "none";
+    document.getElementById("be-qr-screen").style.display = "block";
+    window.scrollTo(0, 0);
+  }
+
+  function beEdit() {
+    document.getElementById("be-qr-screen").style.display = "none";
+    document.getElementById("be-form-screen").style.display = "block";
+  }
+
+  function beDone(el) {
+    var url = el.getAttribute("data-url");
+    var here = window.location.href.split("#")[0];
+    var there = url.split("#")[0];
+    if (here === there) {
+      window.location.hash = url.split("#")[1] || "";
+      window.location.reload();
+    } else {
+      window.location.href = url;
+    }
+  }
+</script>

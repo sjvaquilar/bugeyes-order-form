@@ -618,6 +618,14 @@
     box.classList.add("be-show");
   }
 
+  // Spell accents out as \u00e9 etc. so the barcode scanner only has to
+  // type plain keyboard characters. The booth app turns them back.
+  function beAsciiJson(obj) {
+    return JSON.stringify(obj).replace(/[\u007f-\uffff]/g, function (c) {
+      return "\\u" + ("0000" + c.charCodeAt(0).toString(16)).slice(-4);
+    });
+  }
+
   function beGenerate() {
     document.getElementById("be-top-error").classList.remove("be-show");
     var bad = beValidate();
@@ -632,7 +640,7 @@
     el.innerHTML = "";
     try {
       new QRCode(el, {
-        text: JSON.stringify(beBuildPayload()),
+        text: beAsciiJson(beBuildPayload()),
         width: 512,
         height: 512,
         correctLevel: QRCode.CorrectLevel.M

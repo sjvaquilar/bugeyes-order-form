@@ -219,6 +219,8 @@
   .bugeyes-container .be-top-error.be-show { display: block; }
 
   .bugeyes-container #be-qr-screen { display: none; text-align: center; padding: 20px 0; }
+  .bugeyes-container .be-event-name { margin: 0 0 14px; font-size: 15px; font-weight: 600; color: #333; }
+  .bugeyes-container .be-band-img { display: none; max-height: 34px; max-width: 90%; }
   .bugeyes-container #be-qrcode { display: flex; justify-content: center; margin: 20px 0; }
   .bugeyes-container #be-qrcode img,
   .bugeyes-container #be-qrcode canvas { width: 100%; max-width: 320px; height: auto; }
@@ -229,6 +231,8 @@
   <div class="be-privacy">
     <strong>Zero-Data Privacy Guarantee:</strong> This form runs 100% inside your phone's browser. No data is sent to or stored on our servers. Tapping "Generate Order QR Code" creates a code on your screen that is wiped as soon as your bracelet is etched.
   </div>
+
+  <div class="be-event-name" id="be-event-name" style="display:none;"></div>
 
   <div id="be-form-screen">
 
@@ -262,7 +266,7 @@
           </div>
         </div>
 
-        <div class="be-group">
+        <div class="be-group be-font-group">
           <span class="be-label">Outer Font</span>
           <div class="be-fonts">
           <button type="button" onclick="beFont(this)" class="be-font f-bangers be-active" data-font="Bangers">Bangers</button>
@@ -276,7 +280,7 @@
 
         <div class="be-group">
           <span class="be-label">Outer Preview</span>
-          <div class="be-band"><span class="be-band-text be-empty f-bangers">YOUR OUTER MESSAGE</span></div>
+          <div class="be-band"><span class="be-band-text be-empty f-bangers">YOUR OUTER MESSAGE</span><img class="be-band-img" alt=""></div>
         </div>
 
         <div class="be-group">
@@ -358,6 +362,9 @@
   var BE_MAX_BRACELETS = 5;
   var BE_BAND_MAX_PX = 30;
   var BE_BAND_MIN_PX = 9;
+  var BE_TEMPLATE = "If found on the ground, I have been taken by ICE. My name is {name}. Please call {contact} at {phone} to let them know.";
+  var BE_EVENT_ID = "";
+  var BE_PICS = {};
 
   function beCards() {
     return document.getElementById("be-bracelets").querySelectorAll(".be-card");
@@ -421,14 +428,34 @@
     }
   }
 
+  function beIsPic(text) {
+    return text.indexOf("GFX:") === 0;
+  }
+
   function beUpdateOuter(card) {
     var t = card.querySelector(".be-band-text");
+    var img = card.querySelector(".be-band-img");
     var text = beOuterText(card);
+    var pic = beIsPic(text);
+    card.querySelector(".be-font-group").style.display = pic ? "none" : "block";
+    var wrap = card.querySelector(".be-outer-custom-wrap");
+    wrap.style.display = (card.querySelector(".be-outer-preset").value === "CUSTOM") ? "block" : "none";
+    if (pic) {
+      var id = text.substring(4);
+      t.innerText = BE_PICS[id] || id;
+      t.className = "be-band-text f-bangers";
+      img.onerror = function () { img.style.display = "none"; t.style.display = "inline"; beFitBand(card); };
+      img.onload = function () { img.style.display = "inline"; t.style.display = "none"; };
+      if (img.getAttribute("src") !== "graphics/" + id + ".png") img.setAttribute("src", "graphics/" + id + ".png");
+      beFitBand(card);
+      return;
+    }
+    img.style.display = "none";
+    img.removeAttribute("src");
+    t.style.display = "inline";
     t.innerText = text || "YOUR OUTER MESSAGE";
     t.className = "be-band-text " + beFontClass(card.getAttribute("data-font"));
     if (!text) t.classList.add("be-empty");
-    var wrap = card.querySelector(".be-outer-custom-wrap");
-    wrap.style.display = (card.querySelector(".be-outer-preset").value === "CUSTOM") ? "block" : "none";
     beFitBand(card);
   }
 
@@ -441,7 +468,7 @@
       var wearer = card.querySelector(".be-wearer").value.trim() || "[name]";
       var contact = card.querySelector(".be-contact").value.trim() || "[Emergency Contact]";
       var phone = card.querySelector(".be-ecphone").value.trim() || "[EC phone number]";
-      box.innerText = "If found on the ground, I have been taken by ICE. My name is " + wearer + ". Please call " + contact + " at " + phone + " to let them know.";
+      box.innerText = BE_TEMPLATE.split("{name}").join(wearer).split("{contact}").join(contact).split("{phone}").join(phone);
     } else if (type === "CUSTOM") {
       box.innerText = card.querySelector(".be-inner-custom").value.trim() || "Your custom inside message";
     } else {
@@ -602,14 +629,17 @@
       } else if (type === "CUSTOM") {
         back = "CUST:" + c.querySelector(".be-inner-custom").value.trim();
       }
-      items.push({ font: c.getAttribute("data-font"), front: beOuterText(c), back: back });
+      var front = beOuterText(c);
+      items.push({ font: beIsPic(front) ? "Bangers" : c.getAttribute("data-font"), front: front, back: back });
     }
-    return {
+    var order = {
       name: document.getElementById("be-customer-name").value.trim() || "Guest",
       sms: document.getElementById("be-customer-sms").value.trim(),
       optin: document.getElementById("be-optin").checked ? 1 : 0,
       items: items
     };
+    if (BE_EVENT_ID) order.ev = BE_EVENT_ID;
+    return order;
   }
 
   function beShowTopError(msg) {
@@ -660,6 +690,66 @@
     document.getElementById("be-qr-screen").style.display = "none";
     document.getElementById("be-form-screen").style.display = "block";
   }
+
+  // ---- Event presets -------------------------------------------------
+  // The booth app makes a table QR code whose link carries the event's
+  // presets: ?ev=<code>. No link code = the standard presets above.
+  function beDecode(code) {
+    var b = code.split("-").join("+").split("_").join("/");
+    while (b.length % 4) b += "=";
+    var bin = atob(b);
+    try {
+      var bytes = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      return new TextDecoder("utf-8").decode(bytes);
+    } catch (e) {
+      return decodeURIComponent(escape(bin));
+    }
+  }
+
+  function beOption(sel, value, text) {
+    var o = document.createElement("option");
+    o.value = value;
+    o.text = text;
+    sel.appendChild(o);
+  }
+
+  function beLoadEvent() {
+    var m = /[?&]ev=([^&#]+)/.exec(window.location.search);
+    if (!m) return;
+    var ev;
+    try { ev = JSON.parse(beDecode(m[1])); } catch (e) { return; }
+    if (!ev || !ev.i) return;
+    BE_EVENT_ID = String(ev.i);
+    var title = document.getElementById("be-event-name");
+    if (ev.n) { title.innerText = ev.n; title.style.display = "block"; }
+
+    var card = beCards()[0];
+    var sel = card.querySelector(".be-outer-preset");
+    while (sel.options.length) sel.remove(0);
+    beOption(sel, "", "Choose a message");
+    var list = ev.o || [];
+    var i;
+    for (i = 0; i < list.length; i++) beOption(sel, list[i], list[i]);
+    var pics = ev.g || [];
+    for (i = 0; i < pics.length; i++) {
+      BE_PICS[pics[i].i] = pics[i].l;
+      beOption(sel, "GFX:" + pics[i].i, "Picture: " + pics[i].l);
+    }
+    beOption(sel, "CUSTOM", "Write my own");
+
+    var inner = card.querySelector(".be-inner-type");
+    var keep = [];
+    if (ev.t) { BE_TEMPLATE = ev.t; keep.push(["STANDARD", "Emergency contact information"]); }
+    if (ev.c) keep.push(["CUSTOM", "Custom inside message"]);
+    keep.push(["BLANK", "Leave the inside blank"]);
+    while (inner.options.length) inner.remove(0);
+    for (i = 0; i < keep.length; i++) beOption(inner, keep[i][0], keep[i][1]);
+    inner.selectedIndex = 0;
+    beUpdateCard(card);
+  }
+
+  beLoadEvent();
 
 function beDone(el) {
     var targetUrl = el.getAttribute("data-url");
